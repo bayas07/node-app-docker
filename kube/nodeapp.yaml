@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodeapp-deployment-v
+  labels:
+    app: nodeapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodeapp
+  template:
+    metadata:
+      labels:
+        app: nodeapp
+    spec:
+      containers:
+        - name: nodeapp
+          image: bayas07/node-app:1.0
+          ports:
+            - containerPort: 3003
+          env:
+            - name: GREETING
+              valueFrom:
+                configMapKeyRef:
+                  name: nodeapp-config
+                  key: greeting
+            - name: NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nodeapp-config
+                  key: name
+            - name: CITY
+              valueFrom:
+                configMapKeyRef:
+                  name: nodeapp-config
+                  key: city
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeapp-service
+spec:
+  type: NodePort
+  selector:
+    app: nodeapp
+  ports:
+    - protocol: TCP
+      port: 3003
+      targetPort: 3003
+      nodePort: 30100
