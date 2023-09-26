@@ -30,6 +30,8 @@ spec:
             items:
               - key: config.properties
                 path: config.properties
+              - key: configNew.properties
+                path: configNew.properties
 ---
 apiVersion: v1
 kind: Service
