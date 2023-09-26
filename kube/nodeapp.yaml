@@ -5,7 +5,7 @@ metadata:
   labels:
     app: nodeapp
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: nodeapp
@@ -26,7 +26,10 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: nodeapp-config
+            name: node-config-prop
+            items:
+              - key: config.properties
+                path: config.properties
 ---
 apiVersion: v1
 kind: Service

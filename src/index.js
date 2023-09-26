@@ -1,34 +1,37 @@
 const express = require("express");
 const fs = require("fs");
 const chokidar = require("chokidar");
+const PropertiesReader = require('properties-reader');
 const app = express();
 
-let greeting = fs.readFileSync('/config/greeting', 'utf8').trim();
-let name = fs.readFileSync('/config/name', 'utf8').trim();
-let city = fs.readFileSync('/config/city', 'utf8').trim();
+const getConfigProperties = () => {
+  const properties = PropertiesReader('/config/config.properties');
+  return {
+      greeting: properties.get('greeting') || "Default Greeting",
+      name: properties.get('name') || "Default Name",
+      city: properties.get('city') || "Default city"
+      // Add more properties as needed.
+  };
+};
 
-const watcher = chokidar.watch('/config', {
-  persistent: true
+let { greeting, name, city } = getConfigProperties();
+
+const watcher = chokidar.watch('/config/config.properties', {
+    persistent: true
 });
 
 watcher.on('change', (path) => {
   console.log(`File ${path} has been changed`);
-  if (path.includes('greeting')) {
-      greeting = fs.readFileSync('/config/greeting', 'utf8').trim();
-      console.log('New greeting:', greeting);
-  }
-  if (path.includes('name')) {
-      name = fs.readFileSync('/config/name', 'utf8').trim();
-      console.log('New name:', name);
-  }
-  if (path.includes('city')) {
-    city = fs.readFileSync('/config/city', 'utf8').trim();
-    console.log('New name:', name);
-}
+  let updatedConfig = getConfigProperties();
+  greeting = updatedConfig.greeting;
+  name = updatedConfig.name;
+  city = updatedConfig.city;
+  // If you add more properties, update them here as well.
+  console.log('Updated Config:', updatedConfig);
 });
 
 app.get('/', (req, res) => {
-    res.send(`App config success - Greeting: ${greeting}, Name: ${name}, City: ${city}`);  
+    res.send(`App config prop success - Greeting: ${greeting}, Name: ${name}, City: ${city}`);  
 });
 
 app.get('/config', (req, res) => {
