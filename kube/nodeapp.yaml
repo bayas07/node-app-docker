@@ -16,25 +16,17 @@ spec:
     spec:
       containers:
         - name: nodeapp
-          image: bayas07/node-app:1.0
+          image: node-app-test:1.0
           ports:
             - containerPort: 3003
-          env:
-            - name: GREETING
-              valueFrom:
-                configMapKeyRef:
-                  name: nodeapp-config
-                  key: greeting
-            - name: NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: nodeapp-config
-                  key: name
-            - name: CITY
-              valueFrom:
-                configMapKeyRef:
-                  name: nodeapp-config
-                  key: city
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nodeapp-config
 ---
 apiVersion: v1
 kind: Service

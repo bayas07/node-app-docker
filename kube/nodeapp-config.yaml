@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: nodeapp-config
 data:
-  greeting: Welcome
-  name: Ahamed
+  greeting: Hello
+  name: Abhishek
   city: Chennai
